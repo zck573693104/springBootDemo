@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONObject;
-import com.kcz.common.JsonResult;
-import com.kcz.common.ErrorCode;
+
+import com.kcz.common.Result;
+import com.kcz.common.ResultCode;
 import com.kcz.common.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,17 +41,17 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
         exceptionResolvers.add(new HandlerExceptionResolver() {
             @Override
             public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception e) {
-                JsonResult jsonResult = new JsonResult();
+                Result jsonResult = new Result();
                 if (handler instanceof HandlerMethod) {
                     HandlerMethod handlerMethod = (HandlerMethod) handler;
 
                     if (e instanceof ServiceException) {//业务失败的异常，如“账号或密码错误”
-                        jsonResult.setCode(ErrorCode.SYSTEM_ERROR);
-                        jsonResult.setMsg(e.getMessage());
+                        jsonResult.setCode(ResultCode.INTERNAL_SERVER_ERROR);
+                        jsonResult.setMessage(e.getMessage());
                         logger.error(e.getMessage());
                     } else {
-                        jsonResult.setCode(ErrorCode.SYSTEM_ERROR);
-                        jsonResult.setMsg("接口 [" + request.getRequestURI() + "] 内部错误，请联系管理员");
+                        jsonResult.setCode(ResultCode.INTERNAL_SERVER_ERROR);
+                        jsonResult.setMessage("接口 [" + request.getRequestURI() + "] 内部错误，请联系管理员");
                         String message = String.format("接口 [%s] 出现异常，方法：%s.%s，异常摘要：%s",
                                 request.getRequestURI(),
                                 handlerMethod.getBean().getClass().getName(),
@@ -60,11 +61,11 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                     }
                 } else {
                     if (e instanceof NoHandlerFoundException) {
-                        jsonResult.setCode(ErrorCode.NOT_FOUND);
-                        jsonResult.setMsg("接口 [" + request.getRequestURI() + "] 不存在");
+                        jsonResult.setCode(ResultCode.NOT_FOUND);
+                        jsonResult.setMessage("接口 [" + request.getRequestURI() + "] 不存在");
                     } else {
-                        jsonResult.setCode(ErrorCode.SYSTEM_ERROR);
-                        jsonResult.setMsg(e.getMessage());
+                        jsonResult.setCode(ResultCode.INTERNAL_SERVER_ERROR);
+                        jsonResult.setMessage(e.getMessage());
                         logger.error(e.getMessage(), e);
 
                     }
@@ -89,7 +90,7 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
     }
 
-    private void responseResult(HttpServletResponse response, JsonResult jsonResult) {
+    private void responseResult(HttpServletResponse response, Result jsonResult) {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-type", "application/json;charset=UTF-8");
         response.setStatus(200);

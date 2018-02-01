@@ -1,8 +1,9 @@
 package com.kcz.configure;
 
 import com.alibaba.fastjson.JSONObject;
-import com.kcz.common.JsonResult;
-import com.kcz.common.ErrorCode;
+
+import com.kcz.common.Result;
+import com.kcz.common.ResultCode;
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,9 +24,9 @@ public class NotFoundController implements ErrorController {
     }
     @RequestMapping(value = "/error")
     public Object error(HttpServletResponse response, HttpServletRequest request) {
-        JsonResult jsonResult = new JsonResult();
-        jsonResult.setCode(ErrorCode.NOT_FOUND);
-        jsonResult.setMsg("interface [" + request.getRequestURI() + "] not exists");
+        Result jsonResult = new Result();
+        jsonResult.setCode(ResultCode.NOT_FOUND);
+        jsonResult.setMessage("interface [" + request.getRequestURI() + "] not exists");
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-type", "application/json;charset=UTF-8");
         response.setStatus(200);
