@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.kcz.configure.Token;
 import com.kcz.reply.service.WechatService;
 import com.kcz.reply.utils.CheckUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,20 @@ public class WechatController {
         String responseMessage = wechatService.processRequest(request);
         out.print(responseMessage);
         out.flush();
+    }
+
+    @Token(save = true)
+    @RequestMapping("/savetoken")
+    @ResponseBody
+    public String getToken(HttpServletRequest request, HttpServletResponse response){
+        return (String) request.getSession().getAttribute("token");
+    }
+
+    @Token(remove = true)
+    @RequestMapping("/removetoken")
+    @ResponseBody
+    public String removeToken(HttpServletRequest request, HttpServletResponse response){
+        return "success";
     }
 
 }
